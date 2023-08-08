@@ -9,21 +9,17 @@ public class SimpleArrayList<E> implements List<E> {
 
     private Object[] elements;
     private int size = 0;
-    private int capacity;
 
     public SimpleArrayList() {
         elements = new Object[10];
-        capacity = 10;
     }
 
     public SimpleArrayList(int capacity) {
         elements = new Object[capacity];
-        this.capacity = capacity;
     }
 
     public SimpleArrayList(List<E> other) {
-        capacity = other.size();
-        elements = new Object[capacity];
+        elements = new Object[other.size()];
         this.addAll(other);
     }
 
@@ -39,7 +35,11 @@ public class SimpleArrayList<E> implements List<E> {
 
     @Override
     public boolean contains(Object o) {
-        return Arrays.stream(Arrays.copyOf(elements, size)).anyMatch(element -> element.equals(o));
+        Object[] elementData = Arrays.copyOf(elements, size);
+        for (Object el : elementData) {
+            if (el.equals(o)) return true;
+        }
+        return false;
     }
 
     @Override
@@ -48,20 +48,8 @@ public class SimpleArrayList<E> implements List<E> {
     }
 
     @Override
-    @Deprecated
-    public Object[] toArray() {
-        return new Object[0];
-    }
-
-    @Override
-    @Deprecated
-    public <T> T[] toArray(T[] a) {
-        return null;
-    }
-
-    @Override
     public boolean add(E e) {
-        if (size == capacity) {
+        if (size == elements.length) {
             expand();
         }
         elements[size] = e;
@@ -72,7 +60,7 @@ public class SimpleArrayList<E> implements List<E> {
     @Override
     public boolean remove(Object o) {
         if (!this.contains(o)) return false;
-        for (int i = 0; i < capacity; i++) {
+        for (int i = 0; i < elements.length; i++) {
             if (elements[i] == o) {
                 elements[i] = EMPTY_ELEMENT;
                 trim(i);
@@ -98,7 +86,7 @@ public class SimpleArrayList<E> implements List<E> {
     public boolean addAll(Collection<? extends E> c) {
         if (c == null) return false;
 
-        int spaceLeft = capacity - size;
+        int spaceLeft = elements.length - size;
         int minCap = c.size();
 
         if (spaceLeft < minCap) {
@@ -120,7 +108,7 @@ public class SimpleArrayList<E> implements List<E> {
 
         int i = index;
         int minSize = size + c.size();
-        if (minSize >= capacity) {
+        if (minSize >= elements.length) {
             int minGrowth = (int) (minSize * 1.5);
             expand(minGrowth);
         }
@@ -155,7 +143,7 @@ public class SimpleArrayList<E> implements List<E> {
 
     @Override
     public void clear() {
-        elements = new Object[capacity];
+        elements = new Object[elements.length];
         size = 0;
     }
 
@@ -179,7 +167,7 @@ public class SimpleArrayList<E> implements List<E> {
         Objects.requireNonNull(element);
         checkIndexOutOfBounds(index);
 
-        if (size + 1 == capacity) {
+        if (size + 1 == elements.length) {
             expand();
         }
 
@@ -216,18 +204,6 @@ public class SimpleArrayList<E> implements List<E> {
     }
 
     @Override
-    @Deprecated
-    public ListIterator<E> listIterator() {
-        return null;
-    }
-
-    @Override
-    @Deprecated
-    public ListIterator<E> listIterator(int index) {
-        return null;
-    }
-
-    @Override
     public List<E> subList(int fromIndex, int toIndex) {
         checkIndexOutOfBounds(fromIndex);
         checkIndexOutOfBounds(toIndex);
@@ -255,24 +231,47 @@ public class SimpleArrayList<E> implements List<E> {
         return builder.append("]").toString();
     }
 
+    @Override
+    @Deprecated
+    public Object[] toArray() {
+        throw new MethodIsNotImplementedException("ToArray is not implemented.");
+    }
+
+    @Override
+    @Deprecated
+    public <T> T[] toArray(T[] a) {
+        throw new MethodIsNotImplementedException("ToArray is not implemented.");
+    }
+
+    @Override
+    @Deprecated
+    public ListIterator<E> listIterator() {
+        throw new MethodIsNotImplementedException("listIterator is not implemented.");
+    }
+
+    @Override
+    @Deprecated
+    public ListIterator<E> listIterator(int index) {
+        throw new MethodIsNotImplementedException("listIterator is not implemented.");
+    }
+
     private void expand() {
-        int defaultGrow = (int) (capacity * 1.5);
+        int defaultGrow = (int) (elements.length * 1.5);
         expand(defaultGrow);
     }
 
     private void expand(int grow) {
-        int newCapacity = capacity + grow;
+        int newCapacity = elements.length + grow;
         Object[] newElements = new Object[newCapacity];
         System.arraycopy(elements, 0, newElements, 0, size);
         elements = newElements;
-        capacity = newCapacity;
     }
 
     private Object[] shiftRight(int indexFrom, int elementsToShift) {
         Object[] left = Arrays.copyOfRange(elements, 0, indexFrom);
         Object[] right = Arrays.copyOfRange(elements, indexFrom, size);
 
-        Object[] newElements = new Object[capacity];
+        Object[] newElements = new Object[elements.length];
         System.arraycopy(left, 0, newElements, 0, left.length);
         System.arraycopy(right, 0, newElements, left.length + elementsToShift, right.length);
         return newElements;
