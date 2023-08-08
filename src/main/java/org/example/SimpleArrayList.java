@@ -21,7 +21,9 @@ public class SimpleArrayList<E> implements List<E> {
         this.capacity = capacity;
     }
 
-    public SimpleArrayList(SimpleArrayList<E> other) {
+    public SimpleArrayList(List<E> other) {
+        capacity = other.size();
+        elements = new Object[capacity];
         this.addAll(other);
     }
 

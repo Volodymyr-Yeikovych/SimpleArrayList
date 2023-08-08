@@ -59,8 +59,13 @@ public class Main {
         List<Integer> subList = simpleArrayList.subList(0, 2); // subList
         System.out.println(subList);
 
+        List<Integer> derived = new SimpleArrayList<>(subList); // constructor test
+        System.out.println(derived);
+        System.out.println(derived.size());
+
         simpleArrayList.clear(); // clear
         System.out.println(simpleArrayList);
+
 
     }
 }
