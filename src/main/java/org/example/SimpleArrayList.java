@@ -6,7 +6,7 @@ import java.util.function.Consumer;
 public class SimpleArrayList<E> implements List<E> {
 
     private static final Object EMPTY_ELEMENT = null;
-
+    private static final int SHRINK_THRESHOLD = 10;
     private Object[] elements;
     private int size = 0;
 
@@ -23,6 +23,24 @@ public class SimpleArrayList<E> implements List<E> {
         this.addAll(other);
     }
 
+    public void shrinkTest() {
+        SimpleArrayList<Integer> ss = new SimpleArrayList<>();
+
+        for (int i = 0; i < 100; i++) {
+            ss.add(i);
+        }
+
+        System.out.println("Before size: " + ss.size);
+        System.out.println("Before elements length: " + ss.elements.length);
+
+        for (int i = 0; i < 100; i++) {
+            ss.remove(0);
+        }
+
+        System.out.println("After size: " + ss.size);
+        System.out.println("After elements length: " + ss.elements.length);
+    }
+
     @Override
     public int size() {
         return size;
@@ -35,9 +53,8 @@ public class SimpleArrayList<E> implements List<E> {
 
     @Override
     public boolean contains(Object o) {
-        Object[] elementData = Arrays.copyOf(elements, size);
-        for (Object el : elementData) {
-            if (el.equals(o)) return true;
+        for (int i = 0; i < size; i++) {
+            if (elements[i].equals(o)) return true;
         }
         return false;
     }
@@ -59,7 +76,6 @@ public class SimpleArrayList<E> implements List<E> {
 
     @Override
     public boolean remove(Object o) {
-        if (!this.contains(o)) return false;
         for (int i = 0; i < elements.length; i++) {
             if (elements[i] == o) {
                 elements[i] = EMPTY_ELEMENT;
@@ -74,7 +90,6 @@ public class SimpleArrayList<E> implements List<E> {
     @Override
     public boolean containsAll(Collection<?> c) {
         if (c == null) return false;
-        if (c.size() != this.size) return false;
         Object[] elementData = Arrays.copyOf(elements, size);
         for (Object o : elementData) {
             if (!c.contains(o)) return false;
@@ -184,6 +199,7 @@ public class SimpleArrayList<E> implements List<E> {
         elements[index] = EMPTY_ELEMENT;
         trim(index);
         size--;
+        shrinkIfNecessary();
         return previous;
     }
 
@@ -268,12 +284,9 @@ public class SimpleArrayList<E> implements List<E> {
     }
 
     private Object[] shiftRight(int indexFrom, int elementsToShift) {
-        Object[] left = Arrays.copyOfRange(elements, 0, indexFrom);
-        Object[] right = Arrays.copyOfRange(elements, indexFrom, size);
-
         Object[] newElements = new Object[elements.length];
-        System.arraycopy(left, 0, newElements, 0, left.length);
-        System.arraycopy(right, 0, newElements, left.length + elementsToShift, right.length);
+        System.arraycopy(elements, 0, newElements, 0, indexFrom);
+        System.arraycopy(elements, indexFrom, newElements, indexFrom + elementsToShift, size - indexFrom);
         return newElements;
     }
 
@@ -293,6 +306,18 @@ public class SimpleArrayList<E> implements List<E> {
     @SuppressWarnings("unchecked")
     private E elementData(int index) {
         return (E) elements[index];
+    }
+
+    private void shrinkIfNecessary() {
+        int bound = size * 2;
+        int capacity = elements.length;
+        if (capacity <= SHRINK_THRESHOLD) return;
+
+        if (capacity >= bound) {
+            Object[] newElements = new Object[bound];
+            System.arraycopy(elements, 0, newElements, 0, bound);
+            elements = newElements;
+        }
     }
 
     private class Itr implements Iterator<E> {

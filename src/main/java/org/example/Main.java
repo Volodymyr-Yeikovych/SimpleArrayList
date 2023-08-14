@@ -16,8 +16,8 @@ public class Main {
         simpleArrayList.remove(2); // remove
         System.out.println(simpleArrayList.contains(2)); // contains true
         System.out.println(simpleArrayList.contains(4)); // contains false
-        System.out.println(simpleArrayList.size()); // size
-        System.out.println(simpleArrayList); // toString
+        System.out.println(simpleArrayList.size()); // size 2
+        System.out.println(simpleArrayList); // toString [3, 2]
 
         ArrayList<Integer> arrayList = new ArrayList<>();
         arrayList.add(3);
@@ -66,6 +66,6 @@ public class Main {
         simpleArrayList.clear(); // clear
         System.out.println(simpleArrayList);
 
-
+        simpleArrayList.shrinkTest();
     }
 }
