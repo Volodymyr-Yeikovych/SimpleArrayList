@@ -23,24 +23,6 @@ public class SimpleArrayList<E> implements List<E> {
         this.addAll(other);
     }
 
-    public void shrinkTest() {
-        SimpleArrayList<Integer> ss = new SimpleArrayList<>();
-
-        for (int i = 0; i < 100; i++) {
-            ss.add(i);
-        }
-
-        System.out.println("Before size: " + ss.size);
-        System.out.println("Before elements length: " + ss.elements.length);
-
-        for (int i = 0; i < 100; i++) {
-            ss.remove(0);
-        }
-
-        System.out.println("After size: " + ss.size);
-        System.out.println("After elements length: " + ss.elements.length);
-    }
-
     @Override
     public int size() {
         return size;

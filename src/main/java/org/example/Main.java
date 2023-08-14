@@ -66,6 +66,5 @@ public class Main {
         simpleArrayList.clear(); // clear
         System.out.println(simpleArrayList);
 
-        simpleArrayList.shrinkTest();
     }
 }
