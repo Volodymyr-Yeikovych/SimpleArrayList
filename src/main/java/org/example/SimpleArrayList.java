@@ -110,15 +110,14 @@ public class SimpleArrayList<E> implements List<E> {
             expand(minGrowth);
         }
 
-        Object[] shifted = shiftRight(index, c.size());
+        shiftRight(index, c.size());
 
         for (E e : c) {
-            shifted[i] = e;
+            elements[i] = e;
             i++;
             size++;
         }
 
-        elements = shifted;
         return true;
     }
 
@@ -168,9 +167,8 @@ public class SimpleArrayList<E> implements List<E> {
             expand();
         }
 
-        Object[] shifted = shiftRight(index, 1);
-        shifted[index] = element;
-        elements = shifted;
+        shiftRight(index, 1);
+        elements[index] = element;
         size++;
     }
 
@@ -265,11 +263,11 @@ public class SimpleArrayList<E> implements List<E> {
         elements = newElements;
     }
 
-    private Object[] shiftRight(int indexFrom, int elementsToShift) {
+    private void shiftRight(int indexFrom, int elementsToShift) {
         Object[] newElements = new Object[elements.length];
         System.arraycopy(elements, 0, newElements, 0, indexFrom);
         System.arraycopy(elements, indexFrom, newElements, indexFrom + elementsToShift, size - indexFrom);
-        return newElements;
+        elements = newElements;
     }
 
     private void trim(int index) {
