@@ -132,12 +132,6 @@ public class SimpleArrayList<E> implements List<E> {
     }
 
     @Override
-    @Deprecated
-    public boolean retainAll(Collection<?> c) {
-        return false;
-    }
-
-    @Override
     public void clear() {
         elements = new Object[elements.length];
         size = 0;
@@ -249,6 +243,12 @@ public class SimpleArrayList<E> implements List<E> {
     @Deprecated
     public ListIterator<E> listIterator(int index) {
         throw new MethodIsNotImplementedException("listIterator is not implemented.");
+    }
+
+    @Override
+    @Deprecated
+    public boolean retainAll(Collection<?> c) {
+        throw new MethodIsNotImplementedException("retainAll is not implemented.");
     }
 
     private void expand() {
